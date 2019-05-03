@@ -2,22 +2,24 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 
+from .models import AdvUser, user_registrated, SuperRubric, SubRubric
 
-from .models import AdvUser, user_registrated
 
 class ChangeUserInfoForm(forms.ModelForm):
     email = forms.EmailField(required=True,
                              label='Адрес электронной формы')
+
     class Meta:
         model = AdvUser
         fields = ('username', 'email', 'first_name', 'last_name', 'send_messages')
+
 
 class RegisterUserForm(forms.ModelForm):
     email = forms.EmailField(required=True,
                              label='Адрес электронной почты')
     password1 = forms.CharField(label='Пароль',
-                               widget=forms.PasswordInput,
-                               help_text=password_validation.password_validators_help_text_html())
+                                widget=forms.PasswordInput,
+                                help_text=password_validation.password_validators_help_text_html())
     password2 = forms.CharField(label='Пароль (повторно)',
                                 widget=forms.PasswordInput,
                                 help_text='Введите тот же самый пароль еще раз для проверки')
@@ -52,3 +54,12 @@ class RegisterUserForm(forms.ModelForm):
         fields = ('username', 'email', 'password1', 'password2',
                   'first_name', 'last_name', 'send_messages')
 
+
+class SubRubricForm(forms.ModelForm):
+    super_rubric = forms.ModelChoiceField(
+        queryset=SuperRubric.objects.all(), empty_label=None,
+        label='Надрубрика', required=True)
+
+    class Meta:
+        model = SubRubric
+        fields = '__all__'
